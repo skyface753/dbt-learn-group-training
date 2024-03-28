@@ -74,6 +74,6 @@ blabla as (
         cast(jsonb_extract_path_text("_airbyte_data",'total_confirmed') as float) as total_confirmed,
         cast(jsonb_extract_path_text("_airbyte_data",'total_recovered') as float) as total_recovered
     from "postgres".public.stream1
-),
+)
 
 select * from blabla
