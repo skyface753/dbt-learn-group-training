@@ -68,7 +68,30 @@ blabla as (
         cast(jsonb_extract_path_text("_airbyte_data"::JSONB, 'Long') as varchar) as "long",
         cast(jsonb_extract_path_text("_airbyte_data"::JSONB, 'Imagename') as varchar) as "imagename",
         cast(jsonb_extract_path_text("_airbyte_data"::JSONB, 'Category') as varchar) as "category"
-    from "dwtest".public.stream1
+    from "dwtest".public.gps
+),
+
+-- create the category table
+category as (
+    select
+        distinct category as category,
+        row_number() over() as category_id
+    from blabla
+),
+
+-- create the final table
+final as (
+    select
+        blabla._airbyte_emitted_at,
+        blabla._airbyte_normalized_at,
+        blabla.data_raw,
+        blabla.lat,
+        blabla.long,
+        blabla.imagename,
+        blabla.category,
+        category.category_id
+    from blabla
+    left join category on blabla.category = category.category
 )
 
-select * from blabla
+select * from final
